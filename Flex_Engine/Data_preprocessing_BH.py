@@ -504,7 +504,8 @@ def get_trafo_measurement(timestamp, csv_path, voltage=10.5):
 
     
 
-    return float(active_power), float(reactive_power)
+    return float(active_power.iloc[0]) if isinstance(active_power, pd.Series) else float(active_power), \
+       float(reactive_power.iloc[0]) if isinstance(reactive_power, pd.Series) else float(reactive_power)
 
 
 

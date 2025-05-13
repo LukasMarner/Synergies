@@ -231,6 +231,49 @@ def fill_gen(net):
     net.res_gen = df_filled
     return net.res_gen
 
+def fill_sgen(net):
+    df = net.res_sgen
+    df['bus'] = net.sgen['bus']
+
+    # Step 1: Identify all buses (in this case 5 buses: 0, 1, 2, 3, 4)
+    total_buses = len(net.bus)
+    all_buses = pd.Series(range(total_buses))
+
+    # Step 2: Merge the original DataFrame with a DataFrame containing all buses to identify missing ones
+    df_all_buses = pd.DataFrame({'bus': all_buses})
+
+    # Step 3: Perform an outer join to fill missing buses and set the NaN values to 0 for the necessary columns
+    df_filled = df_all_buses.merge(df, on='bus', how='left')
+    # # Step 4: Replace NaN values with 0 where necessary (or fill with a specific default value)
+    df_filled['p_mw'].fillna(0.0, inplace=True)
+    df_filled['q_mvar'].fillna(0.0, inplace=True)
+    df_filled['va_degree'].fillna(0.0, inplace=True)
+    df_filled['vm_pu'].fillna(1.0, inplace=True) 
+    # Step 5: Output the filled DataFrame
+    net.res_sgen = df_filled
+    return net.res_sgen
+
+def fill_ext_grid(net):
+    df = net.res_ext_grid
+    df['bus'] = net.ext_grid['bus']
+
+    # Step 1: Identify all buses (in this case 5 buses: 0, 1, 2, 3, 4)
+    total_buses = len(net.bus)
+    all_buses = pd.Series(range(total_buses))
+
+    # Step 2: Merge the original DataFrame with a DataFrame containing all buses to identify missing ones
+    df_all_buses = pd.DataFrame({'bus': all_buses})
+
+    # Step 3: Perform an outer join to fill missing buses and set the NaN values to 0 for the necessary columns
+    df_filled = df_all_buses.merge(df, on='bus', how='left')
+    # # Step 4: Replace NaN values with 0 where necessary (or fill with a specific default value)
+    df_filled['p_mw'].fillna(0.0, inplace=True)
+    df_filled['q_mvar'].fillna(0.0, inplace=True)
+    df_filled['vm_pu'].fillna(1.0, inplace=True) 
+    # Step 5: Output the filled DataFrame
+    net.res_ext_grid = df_filled
+    return net.res_ext_grid
+
 def minimize_flexibility(net, branch_cap, b,generators, ref_bus=0):
     loads = net.load['p_mw'].reset_index(drop=True)
     map_generators = map_generators_to_buses(generators, net)
