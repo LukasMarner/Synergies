@@ -1,12 +1,9 @@
 ## Creating Bornholm network
 ## Author: Emilie Jong (Technical University of Denmark)
 
-# Inside create_BH_net.py
-import pandas as pd
-# Import only what you need from pandapower instead of the whole module
-from pandapower import create_empty_network, create_bus, create_gen
 import pandapower as pp
-# Add other specific imports as needed
+import pandas as pd
+
 ### BASE CASE
 # path = "C:/Users/emijo/OneDrive - Danmarks Tekniske Universitet/Dokumenter/SYNERGIES/Data BH"
 # file = 'Bornholm 20220706.xlsx'

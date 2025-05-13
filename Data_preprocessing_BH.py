@@ -386,9 +386,10 @@ import cmath
 import math 
 import numpy as np
 import os
-def get_trafo_measurement(timestamp, csv_path, voltage=10.5):
-    # Use the provided CSV path instead of constructing it internally
-    scada_measurements = pd.read_csv(csv_path)
+def get_trafo_measurement(timestamp, csv, voltage=10.5):
+    current_directory = os.getcwd()
+    scada_data = os.path.join(current_directory,csv)
+    scada_measurements = pd.read_csv(scada_data)
     scada_measurements['ts'] = pd.to_datetime(scada_measurements['ts'])
 
     ## Clean column names
@@ -508,10 +509,10 @@ def get_trafo_measurement(timestamp, csv_path, voltage=10.5):
 
 
 
-def make_SCADA_df(timestamp, substations, path):
+def make_SCADA_df(timestamp, substations):
         # Initialize list to hold data
     data = []
-    path = path
+
     # Loop through each substation and get measurements
     for substation, voltage in substations:
         csv = f'{substation}.csv'
@@ -616,55 +617,4 @@ def make_SCADA_df(timestamp, substations, path):
     # # Update the main DataFrame with the extracted values
     # df_SCADA_meas.at[nexo_index, 'Active Power'] = nexo_active_power
     # df_SCADA_meas.at[nexo_index, 'Reactive Power'] = nexo_reactive_power
-    return df_SCADA_meas
-
-
-def make_SCADA_df_lukas(timestamp, substations, scada_path=None):
-    # Initialize list to hold data
-    data = []
-
-    # Loop through each substation and get measurements
-    for substation, voltage in substations:
-        csv_file = f'{substation}.csv'
-        
-        # If scada_path is provided, join it with the CSV filename
-        if scada_path:
-            csv_path = os.path.join(scada_path, csv_file)
-        else:
-            csv_path = csv_file  # Use just the filename if no path provided
-            
-        active_power, reactive_power = get_trafo_measurement(timestamp, csv_path, voltage)
-        active_power = float(active_power) if not isinstance(active_power, (float, int)) else active_power
-        reactive_power = float(reactive_power) if not isinstance(reactive_power, (float, int)) else reactive_power
-
-        data.append({
-            'Substation': substation,
-            'Active Power': active_power,
-            'Reactive Power': reactive_power
-        })
-
-    df_SCADA_meas = pd.DataFrame(data)
-
-    # Handle specific substations
-    for substation in ['Nexo', 'Bodilsker', 'Hasle']:
-        sub_index = df_SCADA_meas[df_SCADA_meas['Substation'] == substation].index
-        if len(sub_index) > 0:
-            index = sub_index[0]
-
-            # Directly assign the values, no additional checks
-            active_power = df_SCADA_meas.at[index, 'Active Power']
-            reactive_power = df_SCADA_meas.at[index, 'Reactive Power']
-
-            # Debug print to check the types again
-            print(f"Before: {substation} Active Power Type: {type(active_power)}, Reactive Power Type: {type(reactive_power)}")
-
-            # If active_power or reactive_power is still a Series, access the first value
-            if isinstance(active_power, pd.Series):
-                active_power = active_power.iloc[0]
-            if isinstance(reactive_power, pd.Series):
-                reactive_power = reactive_power.iloc[0]
-
-            df_SCADA_meas.at[index, 'Active Power'] = active_power
-            df_SCADA_meas.at[index, 'Reactive Power'] = reactive_power
-    
     return df_SCADA_meas
