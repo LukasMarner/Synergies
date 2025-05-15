@@ -290,11 +290,13 @@ for i in buses:
 # reactive_load_bus = net.load['q_mvar']
 
 net_meas.res_gen = fill_gen(net_meas)
+print('net_meas.res_gen', net_meas.res_gen)
 net_meas.load = fill_load(net_meas)
 net_meas.res_sgen = fill_sgen(net_meas)
 net_meas.ext_grid = fill_ext_grid(net_meas)
 
 active_power_bus = net_meas.res_gen['p_mw']
+print('active_power_bus', active_power_bus)
 active_power_bus_sgen = net_meas.res_sgen['p_mw']
 reactive_power_bus = net_meas.res_gen['q_mvar']
 reactive_power_bus_sgen = net_meas.res_sgen['q_mvar']

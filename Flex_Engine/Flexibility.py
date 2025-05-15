@@ -200,7 +200,7 @@ def fill_load(net):
     df_filled['scaling'].fillna(1.0, inplace=True)
     df_filled['in_service'].fillna(True, inplace=True)
     df_filled['type'].fillna('Unknown', inplace=True)
-    df_filled['controllable'].fillna(False, inplace=True)
+    #df_filled['controllable'].fillna(False, inplace=True)
     # Step 5: Output the filled DataFrame
     net.load = df_filled
     return net.load
@@ -215,7 +215,7 @@ def fill_gen(net):
     total_buses = len(net.bus)
     all_buses = pd.Series(range(total_buses))
 
-    df = df.merge(df_sgen, on ='bus', how ='left')
+    #df = df.merge(df_sgen, on ='bus', how ='left')
 
     # Step 2: Merge the original DataFrame with a DataFrame containing all buses to identify missing ones
     df_all_buses = pd.DataFrame({'bus': all_buses})
@@ -247,8 +247,8 @@ def fill_sgen(net):
     # # Step 4: Replace NaN values with 0 where necessary (or fill with a specific default value)
     df_filled['p_mw'].fillna(0.0, inplace=True)
     df_filled['q_mvar'].fillna(0.0, inplace=True)
-    df_filled['va_degree'].fillna(0.0, inplace=True)
-    df_filled['vm_pu'].fillna(1.0, inplace=True) 
+    #df_filled['va_degree'].fillna(0.0, inplace=True)
+    #df_filled['vm_pu'].fillna(1.0, inplace=True) 
     # Step 5: Output the filled DataFrame
     net.res_sgen = df_filled
     return net.res_sgen
@@ -269,7 +269,7 @@ def fill_ext_grid(net):
     # # Step 4: Replace NaN values with 0 where necessary (or fill with a specific default value)
     df_filled['p_mw'].fillna(0.0, inplace=True)
     df_filled['q_mvar'].fillna(0.0, inplace=True)
-    df_filled['vm_pu'].fillna(1.0, inplace=True) 
+    #df_filled['vm_pu'].fillna(1.0, inplace=True) 
     # Step 5: Output the filled DataFrame
     net.res_ext_grid = df_filled
     return net.res_ext_grid

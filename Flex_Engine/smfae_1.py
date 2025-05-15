@@ -125,10 +125,16 @@ def create_pyomo_model(net_meas, Y_bus):
     model.C = pyo.Var(model.buses, model.buses, bounds=(-99.9, None))
     model.S = pyo.Var(model.buses, model.buses, bounds=(-99.9, None))
    
+
+    net_meas.res_gen = fill_gen(net_meas)
+  
+    net_meas.load = fill_load(net_meas)
+    net_meas.res_sgen = fill_sgen(net_meas)
+    net_meas.ext_grid = fill_ext_grid(net_meas)
+
+
     # Extract power data from network
     active_power_bus = net_meas.res_gen['p_mw'].to_dict()
-    
-    
     active_power_bus_sgen = net_meas.res_sgen['p_mw'].to_dict()
     reactive_power_bus = net_meas.res_gen['q_mvar'].to_dict()
     reactive_power_bus_sgen = net_meas.res_sgen['q_mvar'].to_dict()
@@ -218,5 +224,5 @@ solution = {
 
 # Create a DataFrame with the results
 flex_results_df = pd.DataFrame(solution)
-
+print(flex_results_df)
 
