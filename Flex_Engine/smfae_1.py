@@ -116,10 +116,11 @@ def create_pyomo_model(net_meas, Y_bus):
     # Define variables
     model.voltage_real_bus = pyo.Var(model.buses, bounds=(-99.9, None))
     model.voltage_imag_bus = pyo.Var(model.buses, bounds=(-99.9, None))
-    model.flex_up = pyo.Var(model.buses, bounds=(0, None))
-    model.flex_down = pyo.Var(model.buses, bounds=(0, None))
-    model.flex_up_reactive = pyo.Var(model.buses, bounds=(0, None))
-    model.flex_down_reactive = pyo.Var(model.buses, bounds=(0, None))
+    # Set more reasonable bounds on flexibility variables
+    model.flex_up = pyo.Var(model.buses, bounds=(0, 10))  # Limit to 10 MW max
+    model.flex_down = pyo.Var(model.buses, bounds=(0, 10))
+    model.flex_up_reactive = pyo.Var(model.buses, bounds=(0, 10))
+    model.flex_down_reactive = pyo.Var(model.buses, bounds=(0, 10))
    
     # Define C and S as Pyomo variables (not Python dictionaries)
     model.C = pyo.Var(model.buses, model.buses, bounds=(-99.9, None))
@@ -193,13 +194,14 @@ def create_pyomo_model(net_meas, Y_bus):
             model.quad_constraints.add(expr)
     
     # Objective function
-    c = 100  # Weight coefficient
+    c = 100 # Weight coefficient
+    # Corrected objective function that includes both active and reactive power flexibility
     model.objective = pyo.Objective(
-        expr=c*sum(model.flex_up[n] - model.flex_down[n] + 
-                   model.flex_up_reactive[n] - model.flex_down_reactive[n] 
-                   for n in model.buses),
-        sense=pyo.minimize
-    )
+    expr=c*(sum(model.flex_up[n] + model.flex_down[n] + 
+               model.flex_up_reactive[n] + model.flex_down_reactive[n] 
+               for n in model.buses)),
+    sense=pyo.minimize
+)
     
     return model
 
